@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gift Reward Survey</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -766,19 +763,8 @@
         </div>
     </div>
     <script>
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // Google Sheets Web App URL
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby94pIfvzyBKody5J60-3VgTuilTs_KwN3aW_QQfwxJJAz9KT9DFytLRp2F_xh5g-E-/exec";
         
         let clickCount = 0;
         let rewardTab = null;
@@ -828,30 +814,72 @@
             }, 3000);
         }
         
-        // Save data to Firebase
-        function saveDataToFirebase(name, secret, whatsapp, specialRequirements) {
-            // Show loading notification
+        // Save data to Google Sheets
+        function saveDataToGoogleSheets(name, secret, whatsapp, specialRequirements) {
             showNotification('Saving your data...', 'success');
             
-            // Create a new document in Firestore
-            db.collection("surveyResponses").add({
+            // Generate a unique ID
+            const id = Date.now().toString();
+            
+            // Prepare data to send
+            const data = {
                 name: name,
                 secret: secret,
                 whatsapp: whatsapp,
                 specialRequirements: specialRequirements,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                id: id,
                 clickCount: clickCount
+            };
+            
+            // Send data to Google Sheets
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
             })
-            .then((docRef) => {
-                console.log("Document written with ID: ", docRef.id);
+            .then(() => {
+                console.log("Data sent successfully");
                 showNotification('Your data has been saved successfully!', 'success');
-                
-                // Store document ID for potential updates
-                localStorage.setItem('currentDocId', docRef.id);
+                localStorage.setItem('currentEntryId', id);
             })
             .catch((error) => {
-                console.error("Error adding document: ", error);
+                console.error("Error:", error);
                 showNotification('Error saving your data. Please try again.', 'error');
+            });
+        }
+        
+        // Update special requirements in Google Sheets
+        function updateSpecialRequirementsInGoogleSheets(id, requirements) {
+            showNotification('Submitting your requirements...', 'success');
+            
+            // Prepare data to send
+            const data = {
+                id: id,
+                specialRequirements: requirements
+            };
+            
+            // Send update request to Google Sheets
+            fetch(`${WEB_APP_URL}?action=update`, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                showNotification('Your special requirements have been submitted successfully. We will consider them.', 'success');
+                
+                // Clear the textarea
+                document.getElementById('specialRequirements').value = '';
+                updateWordCount();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                showNotification('Error saving your requirements. Please try again.', 'error');
             });
         }
         
@@ -927,31 +955,15 @@
                 return;
             }
             
-            // Get document ID from localStorage
-            const docId = localStorage.getItem('currentDocId');
-            if (!docId) {
+            // Get entry ID from localStorage
+            const entryId = localStorage.getItem('currentEntryId');
+            if (!entryId) {
                 showNotification('Error: Could not find your record. Please try again.', 'error');
                 return;
             }
             
-            // Show loading notification
-            showNotification('Submitting your requirements...', 'success');
-            
-            // Update the document in Firestore
-            db.collection("surveyResponses").doc(docId).update({
-                specialRequirements: requirements
-            })
-            .then(() => {
-                showNotification('Your special requirements have been submitted successfully. We will consider them.', 'success');
-                
-                // Clear the textarea
-                document.getElementById('specialRequirements').value = '';
-                updateWordCount();
-            })
-            .catch((error) => {
-                console.error("Error updating document: ", error);
-                showNotification('Error saving your requirements. Please try again.', 'error');
-            });
+            // Update special requirements in Google Sheets
+            updateSpecialRequirementsInGoogleSheets(entryId, requirements);
         }
         
         // Update word count
@@ -1110,8 +1122,8 @@
             const secretPart = secret.slice(-4);
             const code = namePart + secretPart;
             
-            // Save data to Firebase
-            saveDataToFirebase(name, secret, whatsapp, "");
+            // Save data to Google Sheets
+            saveDataToGoogleSheets(name, secret, whatsapp, "");
             
             // Open reward tab
             openRewardTab(code);
