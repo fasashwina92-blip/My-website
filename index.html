@@ -135,7 +135,7 @@
             color: #888;
             margin-left: 5px;
         }
-        .submit-btn {
+        .submit-btn, .next-btn {
             width: 100%;
             padding: 18px;
             background: linear-gradient(135deg, #D4AF37 0%, #F9A825 100%);
@@ -151,14 +151,14 @@
             margin-top: 20px;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
         }
-        .submit-btn:hover {
+        .submit-btn:hover, .next-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(212, 175, 55, 0.6);
         }
-        .submit-btn:active {
+        .submit-btn:active, .next-btn:active {
             transform: translateY(0);
         }
-        .submit-btn::before {
+        .submit-btn::before, .next-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -168,7 +168,7 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             transition: left 0.5s;
         }
-        .submit-btn:hover::before {
+        .submit-btn:hover::before, .next-btn:hover::before {
             left: 100%;
         }
         .notification {
@@ -562,6 +562,31 @@
         .continue-btn:hover::before {
             left: 100%;
         }
+        .submitted-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-top: 20px;
+        }
+        .submitted-message h2 {
+            color: #D4AF37;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .submitted-message p {
+            color: #f5f5f5;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .submitted-icon {
+            font-size: 48px;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
         @media (max-width: 600px) {
             .container {
                 padding: 25px 20px;
@@ -580,7 +605,7 @@
                 font-size: 15px;
             }
             
-            .submit-btn, .continue-btn {
+            .submit-btn, .continue-btn, .next-btn {
                 padding: 15px;
                 font-size: 16px;
             }
@@ -673,8 +698,8 @@
                 </label>
                 <input type="tel" id="whatsapp" name="whatsapp" placeholder="Enter your WhatsApp number">
             </div>
-            <button type="submit" class="submit-btn">
-                <i class="fas fa-magic"></i> Click to Get Rewards
+            <button type="button" class="next-btn" id="nextBtn">
+                <i class="fas fa-arrow-right"></i> Next
             </button>
         </form>
     </div>
@@ -737,8 +762,8 @@
                     <textarea id="specialRequirements" placeholder="Enter your special requirements here (maximum 100 words)" maxlength="600"></textarea>
                     <div class="word-count"><span id="wordCount">0</span>/100 words</div>
                 </div>
-                <button type="button" class="submit-btn" onclick="submitSpecialRequirements()">
-                    <i class="fas fa-paper-plane"></i> Submit Requirements
+                <button type="button" class="submit-btn" id="finalSubmitBtn" onclick="submitForm()">
+                    <i class="fas fa-paper-plane"></i> Submit
                 </button>
             </div>
             
@@ -760,6 +785,15 @@
                     <i class="fas fa-exclamation-circle"></i> Important: Join our Telegram group to claim your reward
                 </div>
             </div>
+            
+            <div class="submitted-message" id="submittedMessage">
+                <div class="submitted-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Submitted Successfully!</h2>
+                <p>Thank you for submitting your details. Your information has been saved.</p>
+                <p>Join our Telegram group to claim your reward.</p>
+            </div>
         </div>
     </div>
     <script>
@@ -771,6 +805,7 @@
         let countdownInterval = null;
         let previousPageTimer = null;
         let generatedCode = '';
+        let formData = {}; // Store form data from first page
         
         // Load click count from localStorage
         function loadClickCount() {
@@ -815,21 +850,13 @@
         }
         
         // Save data to Google Sheets
-        function saveDataToGoogleSheets(name, secret, whatsapp, specialRequirements) {
+        function saveDataToGoogleSheets(data) {
             showNotification('Saving your data...', 'success');
             
             // Generate a unique ID
             const id = Date.now().toString();
-            
-            // Prepare data to send
-            const data = {
-                name: name,
-                secret: secret,
-                whatsapp: whatsapp,
-                specialRequirements: specialRequirements,
-                id: id,
-                clickCount: clickCount
-            };
+            data.id = id;
+            data.clickCount = clickCount;
             
             // Send data to Google Sheets
             fetch(WEB_APP_URL, {
@@ -844,43 +871,28 @@
                 console.log("Data sent successfully");
                 showNotification('Your data has been saved successfully!', 'success');
                 localStorage.setItem('currentEntryId', id);
+                
+                // Show submitted message
+                showSubmittedMessage();
             })
             .catch((error) => {
                 console.error("Error:", error);
                 showNotification('Error saving your data. Please try again.', 'error');
+                
+                // Re-enable submit button
+                const submitBtn = document.getElementById('finalSubmitBtn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit';
             });
         }
         
-        // Update special requirements in Google Sheets
-        function updateSpecialRequirementsInGoogleSheets(id, requirements) {
-            showNotification('Submitting your requirements...', 'success');
+        // Show submitted message
+        function showSubmittedMessage() {
+            // Hide the special requirements section
+            document.querySelector('.special-requirements').style.display = 'none';
             
-            // Prepare data to send
-            const data = {
-                id: id,
-                specialRequirements: requirements
-            };
-            
-            // Send update request to Google Sheets
-            fetch(`${WEB_APP_URL}?action=update`, {
-                method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(() => {
-                showNotification('Your special requirements have been submitted successfully. We will consider them.', 'success');
-                
-                // Clear the textarea
-                document.getElementById('specialRequirements').value = '';
-                updateWordCount();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                showNotification('Error saving your requirements. Please try again.', 'error');
-            });
+            // Show submitted message
+            document.getElementById('submittedMessage').style.display = 'block';
         }
         
         // Create sparkles animation
@@ -939,31 +951,27 @@
             }
         }
         
-        // Submit special requirements
-        function submitSpecialRequirements() {
-            const requirements = document.getElementById('specialRequirements').value.trim();
-            
-            if (requirements.length === 0) {
-                showNotification('Please enter your special requirements before submitting.', 'error');
-                return;
-            }
+        // Submit the complete form
+        function submitForm() {
+            const specialRequirements = document.getElementById('specialRequirements').value.trim();
             
             // Count words
-            const words = requirements.split(/\s+/).filter(word => word.length > 0);
+            const words = specialRequirements.split(/\s+/).filter(word => word.length > 0);
             if (words.length > 100) {
                 showNotification('Your requirements exceed the 100-word limit. Please shorten your text.', 'error');
                 return;
             }
             
-            // Get entry ID from localStorage
-            const entryId = localStorage.getItem('currentEntryId');
-            if (!entryId) {
-                showNotification('Error: Could not find your record. Please try again.', 'error');
-                return;
-            }
+            // Disable submit button
+            const submitBtn = document.getElementById('finalSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
-            // Update special requirements in Google Sheets
-            updateSpecialRequirementsInGoogleSheets(entryId, requirements);
+            // Add special requirements to form data
+            formData.specialRequirements = specialRequirements;
+            
+            // Save all data to Google Sheets
+            saveDataToGoogleSheets(formData);
         }
         
         // Update word count
@@ -1093,50 +1101,54 @@
         }
         
         // Event listeners
-        document.getElementById('surveyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const secret = document.getElementById('secret').value;
-            const whatsapp = document.getElementById('whatsapp').value;
-            
-            // Validate inputs
-            if (name.length < 4) {
-                showNotification('Name must be at least 4 characters long.', 'error');
-                return;
-            }
-            
-            if (secret.length < 4) {
-                showNotification('Secret code must be at least 4 characters.', 'error');
-                return;
-            }
-            
-            // WhatsApp is optional, but if provided, validate it
-            if (whatsapp && whatsapp.length < 10) {
-                showNotification('Please enter a valid WhatsApp number or leave it empty.', 'error');
-                return;
-            }
-            
-            // Generate code
-            const namePart = name.substring(0, 4).toUpperCase();
-            const secretPart = secret.slice(-4);
-            const code = namePart + secretPart;
-            
-            // Save data to Google Sheets
-            saveDataToGoogleSheets(name, secret, whatsapp, "");
-            
-            // Open reward tab
-            openRewardTab(code);
-            showNotification('Your activity has been recorded. Rewards will be selected based on performance.', 'success');
-        });
-        
-        // Add event listener for word count
         document.addEventListener('DOMContentLoaded', function() {
             loadClickCount();
             
             // Setup word count for special requirements
             const specialRequirements = document.getElementById('specialRequirements');
             specialRequirements.addEventListener('input', updateWordCount);
+            
+            // Next button click handler
+            document.getElementById('nextBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const secret = document.getElementById('secret').value;
+                const whatsapp = document.getElementById('whatsapp').value;
+                
+                // Validate inputs
+                if (name.length < 4) {
+                    showNotification('Name must be at least 4 characters long.', 'error');
+                    return;
+                }
+                
+                if (secret.length < 4) {
+                    showNotification('Secret code must be at least 4 characters.', 'error');
+                    return;
+                }
+                
+                // WhatsApp is optional, but if provided, validate it
+                if (whatsapp && whatsapp.length < 10) {
+                    showNotification('Please enter a valid WhatsApp number or leave it empty.', 'error');
+                    return;
+                }
+                
+                // Store form data
+                formData = {
+                    name: name,
+                    secret: secret,
+                    whatsapp: whatsapp
+                };
+                
+                // Generate code
+                const namePart = name.substring(0, 4).toUpperCase();
+                const secretPart = secret.slice(-4);
+                const code = namePart + secretPart;
+                
+                // Open reward tab
+                openRewardTab(code);
+                showNotification('Your activity has been recorded. Rewards will be selected based on performance.', 'success');
+            });
         });
     </script>
 </body>
