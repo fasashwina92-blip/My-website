@@ -773,7 +773,7 @@
                 <div id="codeDisplay" style="font-family: monospace; font-size: 18px; font-weight: bold; color: #D4AF37; margin: 15px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);"></div>
                 
                 <div class="telegram-container">
-                    <a href="https://t.me/+rhgCTNlouzw3YTE1" class="group-link telegram-link" target="_blank">
+                    <a href="https://t.me/YOUR_TELEGRAM_GROUP_LINK" class="group-link telegram-link" target="_blank">
                         <i class="fab fa-telegram"></i> Join Telegram Group
                     </a>
                     <div class="telegram-note">
@@ -798,7 +798,7 @@
     </div>
     <script>
         // Google Sheets Web App URL
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0yEX_uTjKSEbgK2lF0uDWjn1KRQ8l7pAnUvk78xH9hRsges0S55p4-1FPfxA6EY_E/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxzVFtp_N91fAjvnVCyy9TRaaglKfmXDEWTdKumxy1YHfRdx0Q9fePYFTdxNh3mn-h3/exec";
         
         let clickCount = 0;
         let rewardTab = null;
@@ -850,52 +850,23 @@
         }
         
         // Save data to Google Sheets
-function saveDataToGoogleSheets(data) {
-    showNotification('Saving your data...', 'success');
-    
-    // Generate a unique ID
-    const id = Date.now().toString();
-    data.id = id;
-    data.clickCount = clickCount;
-    
-    // Log the data being sent for debugging
-    console.log("Sending data to Google Sheets:", JSON.stringify(data));
-    
-    // Create URLSearchParams object (more reliable than FormData)
-    const params = new URLSearchParams();
-    params.append('name', data.name);
-    params.append('secret', data.secret);
-    params.append('whatsapp', data.whatsapp);
-    params.append('specialRequirements', data.specialRequirements);
-    params.append('id', data.id);
-    params.append('clickCount', data.clickCount);
-    
-    // Send data to Google Sheets
-    fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: params,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(response => {
-        console.log("Response received:", response);
-        showNotification('Your data has been saved successfully!', 'success');
-        localStorage.setItem('currentEntryId', id);
-        
-        // Show submitted message
-        showSubmittedMessage();
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-        showNotification('Error saving your data. Please try again.', 'error');
-        
-        // Re-enable submit button
-        const submitBtn = document.getElementById('finalSubmitBtn');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit';
-    });
-}
+        function saveDataToGoogleSheets(data) {
+            showNotification('Saving your data...', 'success');
+            
+            // Generate a unique ID
+            const id = Date.now().toString();
+            data.id = id;
+            data.clickCount = clickCount;
+            
+            // Send data to Google Sheets
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
             .then(() => {
                 console.log("Data sent successfully");
                 showNotification('Your data has been saved successfully!', 'success');
