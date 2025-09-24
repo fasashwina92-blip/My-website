@@ -850,23 +850,52 @@
         }
         
         // Save data to Google Sheets
-        function saveDataToGoogleSheets(data) {
-            showNotification('Saving your data...', 'success');
-            
-            // Generate a unique ID
-            const id = Date.now().toString();
-            data.id = id;
-            data.clickCount = clickCount;
-            
-            // Send data to Google Sheets
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
+function saveDataToGoogleSheets(data) {
+    showNotification('Saving your data...', 'success');
+    
+    // Generate a unique ID
+    const id = Date.now().toString();
+    data.id = id;
+    data.clickCount = clickCount;
+    
+    // Log the data being sent for debugging
+    console.log("Sending data to Google Sheets:", JSON.stringify(data));
+    
+    // Create URLSearchParams object (more reliable than FormData)
+    const params = new URLSearchParams();
+    params.append('name', data.name);
+    params.append('secret', data.secret);
+    params.append('whatsapp', data.whatsapp);
+    params.append('specialRequirements', data.specialRequirements);
+    params.append('id', data.id);
+    params.append('clickCount', data.clickCount);
+    
+    // Send data to Google Sheets
+    fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: params,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => {
+        console.log("Response received:", response);
+        showNotification('Your data has been saved successfully!', 'success');
+        localStorage.setItem('currentEntryId', id);
+        
+        // Show submitted message
+        showSubmittedMessage();
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+        showNotification('Error saving your data. Please try again.', 'error');
+        
+        // Re-enable submit button
+        const submitBtn = document.getElementById('finalSubmitBtn');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit';
+    });
+}
             .then(() => {
                 console.log("Data sent successfully");
                 showNotification('Your data has been saved successfully!', 'success');
