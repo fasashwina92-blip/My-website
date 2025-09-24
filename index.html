@@ -452,6 +452,7 @@
             background: rgba(212, 175, 55, 0.1);
             border-radius: 15px;
             border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.5s ease;
         }
         .special-requirements h3 {
             color: #D4AF37;
@@ -565,26 +566,33 @@
         .submitted-message {
             display: none;
             text-align: center;
-            padding: 20px;
-            background: rgba(212, 175, 55, 0.1);
+            padding: 30px;
+            background: rgba(78, 205, 196, 0.1);
             border-radius: 15px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(78, 205, 196, 0.3);
             margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .submitted-message h2 {
-            color: #D4AF37;
-            font-size: 24px;
+            color: #4ecdc4;
+            font-size: 28px;
             margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.7);
         }
         .submitted-message p {
             color: #f5f5f5;
-            font-size: 16px;
+            font-size: 18px;
             margin-bottom: 15px;
+            line-height: 1.5;
         }
         .submitted-icon {
-            font-size: 48px;
-            color: #D4AF37;
-            margin-bottom: 15px;
+            font-size: 64px;
+            color: #4ecdc4;
+            margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
         @media (max-width: 600px) {
@@ -755,7 +763,7 @@
                 <strong>Today's Activity:</strong> <span id="clickCount">0</span> clicks
             </div>
             
-            <div class="special-requirements">
+            <div class="special-requirements" id="specialRequirementsSection">
                 <h3><i class="fas fa-star"></i> Special Requirements</h3>
                 <p>If you have any special need or requirement under our limit, tell us with your details and we will consider:</p>
                 <div class="form-group">
@@ -765,6 +773,19 @@
                 <button type="button" class="submit-btn" id="finalSubmitBtn" onclick="submitForm()">
                     <i class="fas fa-paper-plane"></i> Submit
                 </button>
+            </div>
+            
+            <div class="submitted-message" id="submittedMessage">
+                <div class="submitted-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Submitted Successfully!</h2>
+                <p>Thank you for submitting your details. Your information has been saved successfully.</p>
+                <p>We have received your special requirements and will review them carefully.</p>
+                <p>Join our Telegram group to claim your reward and stay updated with your reward status.</p>
+                <a href="https://t.me/YOUR_TELEGRAM_GROUP_LINK" class="submit-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;" target="_blank">
+                    <i class="fab fa-telegram"></i> Join Telegram Group
+                </a>
             </div>
             
             <div class="group-links">
@@ -784,15 +805,6 @@
                 <div class="important-note">
                     <i class="fas fa-exclamation-circle"></i> Important: Join our Telegram group to claim your reward
                 </div>
-            </div>
-            
-            <div class="submitted-message" id="submittedMessage">
-                <div class="submitted-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h2>Submitted Successfully!</h2>
-                <p>Thank you for submitting your details. Your information has been saved.</p>
-                <p>Join our Telegram group to claim your reward.</p>
             </div>
         </div>
     </div>
@@ -851,29 +863,42 @@
         
         // Save data to Google Sheets
         function saveDataToGoogleSheets(data) {
-            showNotification('Saving your data...', 'success');
-            
             // Generate a unique ID
             const id = Date.now().toString();
             data.id = id;
             data.clickCount = clickCount;
             
+            // Log the data being sent for debugging
+            console.log("Sending data to Google Sheets:", data);
+            
+            // Create a URL-encoded string with all the data
+            const formData = new URLSearchParams();
+            
+            // Add all form data to the URLSearchParams object
+            Object.keys(data).forEach(key => {
+                formData.append(key, data[key]);
+            });
+            
             // Send data to Google Sheets
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             })
-            .then(response => {
-                console.log("Data sent successfully");
-                showNotification('Your data has been saved successfully!', 'success');
-                localStorage.setItem('currentEntryId', id);
-                
-                // Show submitted message
-                showSubmittedMessage();
+            .then(response => response.json())
+            .then(result => {
+                console.log("Response received:", result);
+                if (result.result === "success") {
+                    showNotification('Your data has been saved successfully!', 'success');
+                    localStorage.setItem('currentEntryId', id);
+                    
+                    // Show submitted message
+                    showSubmittedMessage();
+                } else {
+                    throw new Error(result.error || "Unknown error occurred");
+                }
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -888,11 +913,25 @@
         
         // Show submitted message
         function showSubmittedMessage() {
-            // Hide the special requirements section
-            document.querySelector('.special-requirements').style.display = 'none';
+            console.log("showSubmittedMessage called");
+            
+            // Hide special requirements section
+            const specialRequirementsSection = document.getElementById('specialRequirementsSection');
+            specialRequirementsSection.style.display = 'none';
             
             // Show submitted message
-            document.getElementById('submittedMessage').style.display = 'block';
+            const submittedMessage = document.getElementById('submittedMessage');
+            if (submittedMessage) {
+                submittedMessage.style.display = 'block';
+                console.log("submittedMessage shown");
+                
+                // Scroll to the submitted message
+                setTimeout(() => {
+                    submittedMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                console.log("submittedMessage not found");
+            }
         }
         
         // Create sparkles animation
