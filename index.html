@@ -867,7 +867,7 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(() => {
+            .then(response => {
                 console.log("Data sent successfully");
                 showNotification('Your data has been saved successfully!', 'success');
                 localStorage.setItem('currentEntryId', id);
