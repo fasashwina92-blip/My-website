@@ -764,7 +764,7 @@
     </div>
     <script>
         // Google Sheets Web App URL
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby94pIfvzyBKody5J60-3VgTuilTs_KwN3aW_QQfwxJJAz9KT9DFytLRp2F_xh5g-E-/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbydFYutp9G2fhZ_OpvfBtpP1pff79R-F0MzkHJha1Ov6g4tsz2zj8TBeIlQtS8-32M5/exec";
         
         let clickCount = 0;
         let rewardTab = null;
